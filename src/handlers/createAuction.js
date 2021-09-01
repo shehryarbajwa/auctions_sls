@@ -7,6 +7,8 @@ async function createAuction(event, context) {
   const { title } = JSON.parse(event.body);
   const now = new Date();
 
+  console.log(now);
+
   const auction = {
     id: uuid(),
     title: title,
