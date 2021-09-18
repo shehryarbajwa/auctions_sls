@@ -10,7 +10,7 @@ provider:
   runtime: nodejs12.x
   memorySize: 256
   stage: ${opt:stage, 'dev'}
-  region: eu-west-1
+  region: eu-west-2
   environment:
     AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
   iamRoleStatements:
@@ -28,9 +28,23 @@ functions:
           method: POST
           path: /auction
 
+  getAuctions:
+    handler: src/handlers/getAuctions.handler
+    events:
+      - http:
+          method: GET
+          path: /auctions
+
+  getAuction:
+    handler: src/handlers/getAuction.handler
+    events:
+      - http:
+          method: GET
+          path: /auction/{id}
+
 custom:
   AuctionsTable:
     name: !Ref AuctionsTable
-    arn: !GetAtt AuctionsTable.arn
+    arn: !GetAtt AuctionsTable.Arn
   bundle:
     linting: false
