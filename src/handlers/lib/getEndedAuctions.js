@@ -1,0 +1,28 @@
+import AWS from 'aws-sdk';
+
+const dynamodb = new AWS.DynamoDB.DocumentClient();
+
+//Query DynamoDB for ended auctions
+//IndexName is the Global Secondary Index Name
+//KeyConditionExpression is the query condition expression
+//ExpressionAttributeValues is the query expression attribute values
+
+export async function getEndedAuctions() {
+  const now = new Date();
+
+  const params = {
+    TableName: process.env.AUCTIONS_TABLE_NAME,
+    IndexName: 'statusAndEndDate',
+    KeyConditionExpression: '#status = :status AND endingAt <= :now',
+    ExpressionAttributeValues: {
+      ':status': 'OPEN',
+      ':now': now.toISOString(),
+    },
+    ExpressionAttributeNames: {
+      '#status': 'status',
+    },
+  };
+
+  const result = await dynamodb.query(params).promise();
+  return result.Items;
+}
